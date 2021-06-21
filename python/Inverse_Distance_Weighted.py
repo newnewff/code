@@ -1,4 +1,4 @@
-#Inverse Distance Weighted
+#Inverse Distance Weighted for python
 import math
 from math import radians, cos, sin, asin, sqrt
 import copy
