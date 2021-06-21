@@ -13,4 +13,5 @@ IDW插值方法假定每个输入点都有着局部影响，这种影响随着�
 步骤：
 ①计算未知点到所有点的距离；
 ② 计算每个点的权重：权重是距离的倒数的函数。
+
 ![ScreenShot](https://gitee.com/jfan01/code-snippet/raw/master/images/1.webp)
