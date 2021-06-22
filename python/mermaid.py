@@ -1,4 +1,5 @@
 # python 与使用 mermaid.ink 服务的 mermaid-js 集成
+# https://mermaid-js.github.io/mermaid/#/./Tutorials
 import base64
 import requests, io
 from PIL import Image
