@@ -1,4 +1,4 @@
-# python点聚合
+# python点聚类
 
 ## 1.空间索引
 https://www.osgeo.cn/rtree/
