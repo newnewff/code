@@ -1,3 +1,4 @@
+## 1.自定义第二套CSS
 vue/src/main.js
 ```js
 import { checkRunDeviceForLoadCss } from '@/utils/checkRunDevice';
@@ -35,6 +36,9 @@ export function checkRunDeviceForLoadCss() {
 
 vue/src/views/xxx/xxx/xxx.vue
 ```js
+<div :class="runDevice==1?'login-mobile':''" class="login">
+</div>
+<div v-if="runDevice==1"></div>
 export default {
     data(){
         return{
@@ -43,3 +47,7 @@ export default {
     }
 }
 ```
+
+## 2.引入px2rem-loader将px转换成em
+
+## 3.引入lib-flexible
