@@ -1,0 +1,252 @@
+```
+一、求圆点四周，距离圆点距离为指定半径的所有点位置（经纬度）
+ 1、首先需要自定义经纬度类，便于后面使用。
+
+  //自定义经纬度类
+    public class MyLatLng
+    {
+        public double Rc = 6378137;     //赤道半径
+        public double Rj = 6356725;     //极半径
+        public double m_LoDeg, m_LoMin, m_LoSec;
+        public double m_LaDeg, m_LaMin, m_LaSec;
+        public double m_Longitude, m_Latitude;
+        public double m_RadLo, m_RadLa;
+        public double Ec;
+        public double Ed;
+        public MyLatLng(double longitude, double latitude)
+        {
+            m_LoDeg = (int)longitude;
+            m_LoMin = (int)((longitude - m_LoDeg) * 60);
+            m_LoSec = (longitude - m_LoDeg - m_LoMin / 60) * 3600;
+
+            m_LaDeg = (int)latitude;
+            m_LaMin = (int)((latitude - m_LaDeg) * 60);
+            m_LaSec = (latitude - m_LaDeg - m_LaMin / 60) * 3600;
+
+            m_Longitude = longitude;
+            m_Latitude = latitude;
+            m_RadLo = longitude * Math.PI / 180;
+            m_RadLa = latitude * Math.PI / 180;
+            Ec = Rj + (Rc - Rj) * (90 - m_Latitude) / 90;
+            Ed = Ec * Math.Cos(m_RadLa);
+        }
+    }
+2、准备“度与弧度互转”的接口。
+
+度 转 弧度 
+
+//度 转换成 弧度
+public static double DegreesToRadians(double degrees)
+{
+     const double degToRadFactor = Math.PI / 180;
+     return degrees * degToRadFactor;
+}
+弧度 转 度
+
+//弧度 转换成 度
+public static double RadiansToDegrees(double radians)
+{
+      const double radToDegFactor = 180 / Math.PI;
+      return radians * radToDegFactor;
+}
+3、求圆点四周，距离圆点距离为指定半径的所有点位置（经纬度）
+
+/**
+* 求B点经纬度
+* @param A 已知点的经纬度，
+* @param distance   AB两地的距离  单位km
+* @param angle  AB连线与正北方向的夹角（0~360）
+* @return  B点的经纬度
+*/
+public static MyLatLng getMyLatLng(MyLatLng A, double distance, double angle)
+{
+double dx = distance * 1000 * Math.Sin(DegreesToRadians(angle));
+double dy = distance * 1000 * Math.Cos(DegreesToRadians(angle));
+
+double bjd = (dx / A.Ed + A.m_RadLo) * 180/ Math.PI;
+double bwd = (dy / A.Ec + A.m_RadLa) * 180/ Math.PI;
+return new MyLatLng(bjd, bwd);
+}
+二、绘制到Gmap图层
+这里，绘制到Gmap图层的方式有三种。
+
+1、添加marker方式
+
+//描述：以centerP为圆心，绘制半径为radius的圆
+//gMapControl：Gmap控制器overlay：图层
+//centerP：圆心点 radius：圆半径(单位: km)
+public static void DrawEllipse(GMapControl gMapControl, GMapOverlay overlay, PointLatLng centerP, int radius)
+{
+try
+{
+if (radius <= 0)
+return;
+List<PointLatLng> latLngs = new List<PointLatLng>();
+MyLatLng centerLatLng = new MyLatLng(centerP.Lng, centerP.Lat);
+
+// 0 - 360度 寻找半径为radius，圆心为centerP的圆上点的经纬度
+for (int i = 0; i < 360; i++)
+{
+//获取目标经纬度
+MyLatLng tempLatLng = getMyLatLng(centerLatLng, radius, i);
+//将自定义的经纬度类 转换成 标准经纬度类
+PointLatLng p = new PointLatLng(tempLatLng.m_Latitude, tempLatLng.m_Longitude);
+
+//通过绘制标记点的方式绘制圆
+GMapMarker gMapMarker = new GMarkerGoogle(p, GMarkerGoogleType.red);
+overlay.Markers.Add(gMapMarker);
+}
+}
+catch (Exception ex)
+{
+Dialog.Error(ex);
+}
+}
+2、添加路线方式
+
+//描述：以centerP为圆心，绘制半径为radius的圆
+//gMapControl：Gmap控制器overlay：图层
+//centerP：圆心点 radius：圆半径(单位: km)  name:路线id
+public static void DrawEllipse(GMapControl gMapControl, GMapOverlay overlay, PointLatLng centerP, int radius, string name)
+{
+try
+{
+if (radius <= 0)
+return;
+List<PointLatLng> latLngs = new List<PointLatLng>();
+MyLatLng centerLatLng = new MyLatLng(centerP.Lng, centerP.Lat);
+
+// 0 - 360度 寻找半径为radius，圆心为centerP的圆上点的经纬度
+for (int i = 0; i < 360; i++)
+{
+//获取目标经纬度
+MyLatLng tempLatLng = getMyLatLng(centerLatLng, radius, i);
+//将自定义的经纬度类 转换成 标准经纬度类
+PointLatLng p = new PointLatLng(tempLatLng.m_Latitude, tempLatLng.m_Longitude);
+latLngs.Add(p);
+}
+
+//安全性检查
+if (latLngs.Count < 20)
+{
+return;
+}
+
+//通过绘制路线的方式绘制圆
+GMapRoute route = new GMapRoute(latLngs, name);
+if (route == null)
+{
+    return;
+}
+route.Stroke = new Pen(Color.Red, 2.5f);
+overlay.Routes.Add(route);
+}
+catch (Exception ex)
+{
+Dialog.Error(ex);
+}
+}
+3、添加多边形方式（推荐使用，便于扩展功能）
+
+//描述：以centerP为圆心，绘制半径为radius的圆
+//gMapControl：Gmap控制器overlay：图层
+//centerP：圆心点 radius：圆半径(单位: km)  name:多边形id
+public static void DrawEllipse(GMapControl gMapControl, GMapOverlay overlay, PointLatLng centerP, int radius, string name)
+{
+try
+{
+if (radius <= 0)
+return;
+List<PointLatLng> latLngs = new List<PointLatLng>();
+MyLatLng centerLatLng = new MyLatLng(centerP.Lng, centerP.Lat);
+
+// 0 - 360度 寻找半径为radius，圆心为centerP的圆上点的经纬度
+for (int i = 0; i < 360; i++)
+{
+//获取目标经纬度
+MyLatLng tempLatLng = getMyLatLng(centerLatLng, radius, i);
+//将自定义的经纬度类 转换成 标准经纬度类
+PointLatLng p = new PointLatLng(tempLatLng.m_Latitude, tempLatLng.m_Longitude);
+latLngs.Add(p);
+}
+
+//安全性检查
+if (latLngs.Count < 20)
+{
+return;
+}
+
+//通过绘制多边形的方式绘制圆
+GMapPolygon gpol = new GMapPolygon(latLngs, name);
+gpol.Stroke = new Pen(Color.Red, 1.0f);
+gpol.Fill = new SolidBrush(Color.FromArgb(20, Color.Red));
+gpol.IsHitTestVisible = true;
+overlay.Polygons.Add(gpol);
+}
+catch (Exception ex)
+{
+Dialog.Error(ex);
+}
+}
+
+三、 圆心（marker）闪烁
+其实就是marker的显示与隐藏功能，加上定时器。
+
+private System.Windows.Forms.Timer treeExTimer = null;    //古树异常点闪烁定时器
+//古树异常点闪烁定时器 开始
+private void StartTreeExTimer()
+{
+//古树异常点闪烁定时器 初始化
+if (treeExTimer != null)
+StopTreeExTimer();
+treeExTimer = new System.Windows.Forms.Timer();
+treeExTimer.Interval = 1000;
+treeExTimer.Tick += new EventHandler(TreeExTimer_Tick);
+treeExTimer.Enabled = true;
+treeExTimer.Start();
+}
+
+//古树异常点 定时闪烁
+private void TreeExTimer_Tick(object sender, EventArgs e)
+{
+if (TreeExLayer.Markers.Count == 0)
+{
+Dialog.Information("stop");
+StopTreeExTimer();
+return;
+}
+foreach (GMapMarker m in TreeExLayer.Markers)
+{
+if (m is TreeExMarker)
+{
+TreeExMarker marker = m as TreeExMarker;
+//marker闪烁实现部分，并在marker上绘制红色圈
+if (marker.OutPen == null)
+{
+marker.OutPen = new Pen(Brushes.Red, 2);
+marker.IsVisible = true;
+}                        
+else
+{
+marker.OutPen.Dispose();
+marker.OutPen = null;
+marker.IsVisible = false;
+}
+}
+}
+this.gMapControl.Refresh();
+}
+
+//古树异常点闪烁定时器 结束
+private void StopTreeExTimer()
+{
+if (treeExTimer != null)
+{
+treeExTimer.Enabled = false;
+treeExTimer.Stop();
+treeExTimer.Dispose();
+treeExTimer = null;
+}            
+}
+
+```
