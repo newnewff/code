@@ -1,3 +1,4 @@
+<!-- get mouse click position all dom -->
 ```
 function getPointDomList(dom) {
   var topDom = document.elementFromPoint(event.clientX, event.clientY);
