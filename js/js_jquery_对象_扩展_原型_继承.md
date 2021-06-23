@@ -39,12 +39,73 @@ String.prototype.addstring = function () { //给 String 类型添加一个方法
 	return this + '，被添加了！'; //this 代表调用的字符串
 };
 ```
-jquery扩展
+jquery扩展  
+
+jQuery.fn.extend(object);  给jQuery对象添加方法。  
+
+jQuery.extend(object);  为扩展jQuery类本身.为类添加新的方法。
 ```js
 $.fn.InitUserList=function(params){
 
 }
 $('#div1').InitUserList({data:data});
+```
+
+```js
+jQuery.bar = function(param) {   
+alert('This function takes a parameter, which is "' + param + '".');  
+}; 
+$.bar('bar');  
+```
+
+```js
+$.fn..extend({         
+	bar: function(param) {      
+		alert('This function takes a parameter, which is "' + param +'".');      
+	}     
+});  
+      
+$.fn.hilight = function(options) {    
+  var defaults = {    
+    foreground: 'red',    
+    background: 'yellow'    
+  };      
+  var opts = $.extend(defaults, options);    
+  // Our plugin implementation code goes here.    
+};    
+我们的插件可以这样被调用：  
+$('#myDiv').hilight({    
+  foreground: 'blue'    
+});     
+```
+暴露插件的默认设置
+```js
+$.fn.hilight = function(options) {    
+  var opts = $.extend({}, $.fn.hilight.defaults, options);    
+};    
+$.fn.hilight.defaults = {    
+  foreground: 'red',    
+  background: 'yellow'    
+};     
+
+//这个只需要调用一次，且不一定要在ready块中调用  
+$.fn.hilight.defaults.foreground = 'blue';    
+$('#myDiv').hilight();   
+```
+
+jquery使用命名空间扩展
+```
+jQuery.myPlugin = {          
+foo:function() {          
+alert('This is a test. This is only a test.');          
+},          
+bar:function(param) {          
+alert('This function takes a parameter, which is "' + param + '".');    
+}         
+};  
+采用命名空间的函数仍然是全局函数，调用时采用的方法：  
+$.myPlugin.foo();         
+$.myPlugin.bar('baz');  
 ```
 
 判断属性是否存在
@@ -73,9 +134,19 @@ function Box(name ,age) { //将所有信息封装到函数体内
 　　　　　　return this.name + this.age + '运行中...';
 　　　　};
 　　}
+  this.area={
+           _p:{a:false,b:''},
+           init:function(){} 
+     } 
 }
 var box = new Box('Lee', 100);
+box.area.init(); 
 alert(box.run());
+```
+
+```js
+var Circle={ "PI":3.14159, "area":function(r){ return this.PI * r * r; } };  
+alert( Circle.area(1.0) );  
 ```
 
 寄生构造函数
