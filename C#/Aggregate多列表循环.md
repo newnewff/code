@@ -1,5 +1,7 @@
 <!-- use Aggregate to multiple list foreach  -->
 //linq Aggregate 交叉汇总
+
+
 设值 
 ```c#
 List<List<string>> list = new List<List<string>>();
