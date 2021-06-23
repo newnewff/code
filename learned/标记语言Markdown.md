@@ -51,6 +51,10 @@ Markdown 是一种轻量级标记语言,文件后缀名为md
 html:支持html标签
 ```
 
+```
+注释:github只支持<!----> ,vscode还支持[comment]: <> text    [\\]: <>     [\\]: # 
+```
+
 ---
 ```
 字体:  
