@@ -1,0 +1,82 @@
+<!-- calculation_gradient -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>颜色区域中间的值获取</title>
+    <style>
+        .div {
+            width: 120px;
+            height: 800px;
+            border: 1px solid;
+            margin-left: 10px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .lin {
+            background: -webkit-linear-gradient(top, #00ff00 0%, #ff0000 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="flex">
+        <div class="div lin"></div>
+        <div class="div con1"></div>
+        <div class="div con2"></div>
+    </div>
+
+    <script>
+        var parseColor = function (hexStr) {
+            return hexStr.length === 4 ? hexStr.substr(1).split('').map(function (s) { return 0x11 * parseInt(s, 16); }) : [hexStr.substr(1, 2), hexStr.substr(3, 2), hexStr.substr(5, 2)].map(function (s) { return parseInt(s, 16); })
+        };
+        // zero-pad 1 digit to 2
+        var pad = function (s) {
+            return (s.length === 1) ? '0' + s : s;
+        };
+        /*
+            start 开始颜色
+            end 结束颜色
+            steps 颜色分解 次数
+            gamma 暂时理解为透明一点（伽马）
+        */
+        var gradientColors = function (start, end, steps, gamma) {
+            var i, j, ms, me, output = [], so = [];
+            gamma = gamma || 1;
+            var normalize = function (channel) {
+                return Math.pow(channel / 255, gamma);
+            };
+            start = parseColor(start).map(normalize);
+            end = parseColor(end).map(normalize);
+            for (i = 0; i < steps; i++) {
+                ms = i / (steps - 1);  // 0,0.01,0.02,0/03....1
+                me = 1 - ms;    //1,0.99,0.98....0
+                for (j = 0; j < 3; j++) {
+                    so[j] = pad(Math.round(Math.pow(start[j] * me + end[j] * ms, 1 / gamma) * 255).toString(16));
+                    tt.push(Math.round(Math.pow(start[j] * me + end[j] * ms, 1 / gamma) * 255));
+                }
+                output.push('#' + so.join(''));
+            }
+            return output;
+        };
+        var con1 = document.querySelector(".con1")
+        var con2 = document.querySelector(".con2")
+        var color1 = gradientColors('#ddff00', '#ff0000', 100)
+        var color2 = gradientColors('#00ff00', '#ff0000', 100, 2.2)
+        load(con1,color1)
+        load(con2,color2)
+        function load(ele,colorArr){
+            var h = ele.clientHeight/colorArr.length
+            colorArr.forEach(e => {
+                var div = document.createElement('div')
+                div.style.background = e
+                div.style.height = h +'px'
+                ele.appendChild(div)
+            });
+        }
+    </script>
+</body>
+</html>
