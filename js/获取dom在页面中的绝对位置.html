@@ -1,0 +1,48 @@
+<!--get dom absolute position-->
+<div onclick="getCoordinate()"></div>
+<script>
+  function CPos(x, y)
+  {
+    this.x = x;
+    this.y = y;
+  }
+  // 取得事件（通用）
+  function $EVENTObject()
+  {
+    if(window.event) return window.event;
+    var f=$EVENTObject.caller;
+    while(f!=null)
+    {
+      var e = f.arguments[0];
+      if(e && (e.constructor==MouseEvent||e.constructor==Event||e.constructor==KeyboardEvent)) return e;
+      f=f.caller;
+    }
+  }
+  //取得触发本事件的元素（通用）
+  function getElement()
+  {
+    var _enent=$EVENTObject();
+    if(window.event)
+    {
+      return _enent.srcElement; //是IE
+    }else{
+      return _enent.target; //是FF
+    }
+  }
+  //取得 调用本方法的按钮 距离页面最上端和最左端的位置
+  function getCoordinate()
+  {
+    var target =getElement();
+    var pos = new CPos(target.offsetLeft, target.offsetTop);
+    var target = target.offsetParent;
+    while (target)
+    {
+      pos.x += target.offsetLeft;
+      pos.y += target.offsetTop;
+      target = target.offsetParent
+    }
+    console.log(pos)
+    return pos;
+  }
+
+</script>
