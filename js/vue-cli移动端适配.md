@@ -1,4 +1,4 @@
-[//]: # vue-cli css pc to mobile
+[^_^]:vue-cli css pc to mobile
 
 ## 1.自定义第二套CSS
 vue/src/main.js
