@@ -1,3 +1,4 @@
+<!--check_img_exist_vue-->
 var sharePicture = "http://路径/"+id+".jpg?random="+Math.random();
 if (this.isImgUrl(sharePicture) == 'rejected') {
     this.sharePicture = "http://路径/"+id+".jpg?random="+Math.random();
