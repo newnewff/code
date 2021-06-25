@@ -78,6 +78,7 @@ $\mathfrak{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$
 ---
 ```
 插入图片及链接:
+![](../images/人物比例及构图/psb.jpg)  
 ![图片名称](../aa.jpg)  
 ![网络图片名称](http://www.aa.com/aa.jpg)  
 <img src="http://www.aa.com/aa.jpg" width=20% height=20%/>
