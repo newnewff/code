@@ -1,0 +1,32 @@
+<tbody id="listTbody">
+             <tr>
+                  <td>$$id$$</td>
+                  <td>$$createtime$$</td>
+  <td><a href="#" >恢复</a>  <a href="#" onclick="deleteObj($$id$$)">删除</a></td>
+              </tr>
+  </tbody>
+
+ var backupDom=new Object();
+        function objRepeatBind(id, data) {
+            if (typeof backupDom[id] == "undefined") {
+                backupDom[id] = $('#' + id).html();
+            }
+            var newhtml = '';
+            var oldhtml = backupDom[id];
+            for (var i = 0; i < data.length; i++) {
+                var temphtml = oldhtml;
+                for (var key in data[i]) {
+                    var replaceStr='$$' + key.toLowerCase() + '$$';
+                    temphtml = temphtml.split(replaceStr).join(data[i][key]);
+                }
+                newhtml += temphtml;
+            }
+            $('#' + id).html(newhtml);
+        }
+ 
+ function queryList() {
+            $.post("/beifen/QueryBeiFenList", {  }, function (data) {
+                var objList = JSON.parse(data);
+                objRepeatBind('listTbody', objList);
+            });
+        }
