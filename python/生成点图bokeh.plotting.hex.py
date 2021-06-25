@@ -37,7 +37,7 @@ try:
     #datalist  {'data':[{"x":128.126678,"y":42.422499,"value":109.33453217148781},{"x":128.126411,"y":42.4224,"value":101.38645395636559}],'min_x':128.124252,'max_x':128.137817,'min_y':42.419788,'max_y':42.423298}
     if __name__ == '__main__':
         javaParams= json.loads(json.dumps(eval(sys.argv[1])))
-       
+        #javaParams= json.loads(json.dumps(eval('{"dataFile":"F:\\project\\python\\json.txt"}')))
         params=getParams(javaParams)
       
         if(params["outPath"]!="" and params["dataFile"]!="" and os.path.exists(params["dataFile"])):
