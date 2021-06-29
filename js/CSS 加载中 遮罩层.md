@@ -1,3 +1,4 @@
+```html
 .bg_loading{   
    position: absolute;top:0;left:0;bottom:0;right:0;width:50%;height:50%;margin:auto;  color:#000000;
 }   
@@ -33,3 +34,18 @@
         $("#bg").hide();
     });
 </script> 
+```
+
+``` html
+
+<div class="IDW-loading" v-loading="loading"></div>
+<style>
+   .IDW-loading .el-loading-mask{
+    opacity:0.3;
+  }
+  .IDW-loading .circular{
+    width:26px;height:26px;
+
+  }
+</style>
+```
