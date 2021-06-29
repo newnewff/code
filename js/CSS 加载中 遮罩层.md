@@ -36,6 +36,8 @@
 </script> 
 ```
 
+
+vue+element ui
 ``` html
 
 <div class="IDW-loading" v-loading="loading"></div>
