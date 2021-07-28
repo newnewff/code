@@ -1,3 +1,15 @@
+$nextTick
+```
+异步查询后,DOM已经更新完了.
+$nextTick下次DOM更新循环之后来调用,当数据修改之后立即调用它,然后等待DOM更新
+ this.$nextTick(() => {
+      // $nextTick回调里面的this自动绑定到调用$nextTick的实例上
+      // 要在数据更新之后,列表显示后,创建想要的对象
+      // 例如swiper或者better-scroll
+    });
+```
+
+
 .lazy  v-model.lazy="value"
 ```
 input 光标离开才更新视图。
