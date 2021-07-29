@@ -1,3 +1,18 @@
+在v-test中使用过滤器
+```
+v-text="$options.filters.formatDate(item.createTime)"
+```
+
+后端过来的对象如果需要自定义属性,需要在赋值给vue对象之前进行,否则要使用$set
+```
+var tmpList=response.data;
+for(var i=0;i<tmpList.length;i++){
+    tmpList[i].isSelect=0;
+}
+
+that.IDWList.list=tmpList;
+```
+
 $nextTick
 ```
 异步查询后,DOM已经更新完了.
