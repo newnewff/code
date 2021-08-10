@@ -114,3 +114,48 @@ createElement(
   refInFor: true
 }
  ```
+ 
+ 
+ 动态组件双向绑定:
+ ```
+ <comp-heading v-model="name"></comp-heading>
+ 
+ Vue.component('comp-heading',{
+	render: function (createElement) {
+	  var self = this;
+	  return createElement('input', {
+	    domProps: {
+	      value: self.value
+	    },
+	    on: {
+	      input: function (event) {
+	      	self.updateValue(event.target.value);
+	      }
+	    }
+	  })
+	},
+	methods: {
+	  updateValue: function (value) {
+	    this.$emit('input', value)
+	  }
+	 
+	}
+});
+
+ ```
+ 
+ ```
+  var vdom= this.$createElement('input', 
+      {
+
+        domProps:[{
+          value:that.testValueCreateCount
+        }],
+        on:{  blur: (event) => { console.log(event.target.value); }}
+
+      }, [])
+      this.$notify({
+          dangerouslyUseHTMLString: true,
+          message:vdom
+      });
+ ```
