@@ -52,6 +52,8 @@ devServer: {
 VUE_APP_BASE_API = '/dev-api'
 VUE_APP_BASE_API_NET = '/dev-api/net'
 ```
+
+调用
 src/api/xx.js
 ```
 export function javaTest(){
