@@ -1,0 +1,151 @@
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter/material.dart';
+
+
+class DeviceTabJiLiang extends StatefulWidget {
+  DeviceTabJiLiang({
+    key,
+
+  }): super(key: key);
+
+  @override
+  _DeviceTabJiLiangState createState() => _DeviceTabJiLiangState();
+
+}
+
+
+class _DeviceTabJiLiangState extends State<DeviceTabJiLiang>
+{
+   List<charts.Series<TimeSeriesSales, DateTime>>? seriesList;
+
+
+  @override
+  void initState() {
+    super.initState();
+    seriesList=_createSampleData();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return charts.TimeSeriesChart(
+      seriesList!,
+      animate: true,
+      // Configure the default renderer as a line renderer. This will be used
+      // for any series that does not define a rendererIdKey.
+      //
+      // This is the default configuration, but is shown here for  illustration.
+      defaultRenderer:  charts.LineRendererConfig(),
+      // Custom renderer configuration for the point series.
+      customSeriesRenderers: [
+         charts.PointRendererConfig(
+          // ID used to link series to this renderer.
+            customRendererId: 'customPoint')
+      ],
+      // Optionally pass in a [DateTimeFactory] used by the chart. The factory
+      // should create the same type of [DateTime] as the data provided. If none
+      // specified, the default creates local date time.
+      dateTimeFactory: const charts.LocalDateTimeFactory(),
+      primaryMeasureAxis:const charts.NumericAxisSpec(
+          renderSpec: charts.GridlineRendererSpec(
+              labelStyle: charts.TextStyleSpec(
+                  //fontSize: 10,
+                  color: charts.MaterialPalette.white
+              ),
+              lineStyle: charts.LineStyleSpec(
+                  //thickness: 0,
+                  color: charts.MaterialPalette.white
+              )
+          )
+      ),
+      domainAxis:  const charts.DateTimeAxisSpec(
+        renderSpec: charts.GridlineRendererSpec(
+          axisLineStyle: charts.LineStyleSpec(
+            color: charts.MaterialPalette.white, // this also doesn't change the Y axis labels
+          ),
+          labelStyle:  charts.TextStyleSpec(
+
+            color: charts.MaterialPalette.white,
+          ),
+          lineStyle: charts.LineStyleSpec(
+
+            color: charts.MaterialPalette.white,
+          )
+        ),
+        tickFormatterSpec:  charts.AutoDateTimeTickFormatterSpec(
+          hour:  charts.TimeFormatterSpec(
+            format: 'H',
+            transitionFormat: 'H',
+          ),
+          day: charts.TimeFormatterSpec(
+            format: 'dd',
+            transitionFormat: 'MM-dd',
+          ),
+        )
+      ),
+    );
+
+
+
+  }
+
+  /// Create one series with sample hard coded data.
+  static List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
+    final desktopSalesData = [
+      TimeSeriesSales(new DateTime(2017, 9, 19), 5),
+      TimeSeriesSales(new DateTime(2017, 9, 26), 25),
+      TimeSeriesSales(new DateTime(2017, 10, 3), 100),
+      TimeSeriesSales(new DateTime(2017, 10, 10), 75),
+    ];
+
+    final tableSalesData = [
+      TimeSeriesSales(new DateTime(2017, 9, 19), 10),
+      TimeSeriesSales(new DateTime(2017, 9, 26), 50),
+      TimeSeriesSales(new DateTime(2017, 10, 3), 200),
+      TimeSeriesSales(new DateTime(2017, 10, 10), 150),
+    ];
+
+    final mobileSalesData = [
+      TimeSeriesSales(new DateTime(2017, 10, 3), 100),
+      TimeSeriesSales(new DateTime(2017, 10, 3), 200),
+      TimeSeriesSales(new DateTime(2017, 10, 10), 150),
+    ];
+
+    return [
+      charts.Series<TimeSeriesSales, DateTime>(
+        id: 'Desktop',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (TimeSeriesSales sales, _) => sales.time,
+        measureFn: (TimeSeriesSales sales, _) => sales.sales,
+        data: desktopSalesData,
+      ),
+      charts.Series<TimeSeriesSales, DateTime>(
+        id: 'Tablet',
+        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+        domainFn: (TimeSeriesSales sales, _) => sales.time,
+        measureFn: (TimeSeriesSales sales, _) => sales.sales,
+        data: tableSalesData,
+      ),
+      charts.Series<TimeSeriesSales, DateTime>(
+          id: 'Mobile',
+          colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+          domainFn: (TimeSeriesSales sales, _) => sales.time,
+          measureFn: (TimeSeriesSales sales, _) => sales.sales,
+          data: mobileSalesData)
+      // Configure our custom point renderer for this series.
+        ..setAttribute(charts.rendererIdKey, 'customPoint'),
+    ];
+  }
+
+}
+class TimeSeriesSales {
+  final DateTime time;
+  final int sales;
+
+  TimeSeriesSales(this.time, this.sales);
+}
