@@ -1,0 +1,209 @@
+import 'package:flutter/material.dart';
+import 'package:drmsapp/common/global.dart';
+class DoseColorValueController extends StatefulWidget {
+  DoseColorValueController({
+    key,
+
+  }): super(key: key);
+
+
+  @override
+  _DoseColorValueState createState() => new _DoseColorValueState();
+
+}
+
+class _DoseColorValueState extends State<DoseColorValueController>
+{
+  double? controlHeight=16.0;
+  double minLeft=17;
+  double totalMoveX=0;
+  double colorValueLeftLast=0;
+  double totalMoveDoseInterval=0;
+  List<int> colorList=[90,120,150,180,220,300,500,1000,2000];
+  double mediaScaleSplit=Global.MediaWidth/9;
+
+  int pageQueryDoseInterval=Global.queryDoseInterval;
+  @override
+  void initState() {
+    int index=0;
+    int colorIndexTotalDose=colorList[0];
+    int doseIntervalZeroHead=Global.queryDoseInterval;
+    //获取当前是第几个颜色区间
+    for(;index<colorList.length;index++){
+      if(pageQueryDoseInterval<colorList[index]){
+        break;
+      }
+    }
+    if(index>0){
+      //移动到所在区间的辐射值总量
+      colorIndexTotalDose=colorList[index]-colorList[index-1];
+      //计算颜色区间的辐射零头值
+      doseIntervalZeroHead=pageQueryDoseInterval-colorList[index-1];
+    }
+    //挪动一次屏幕像素距离,与所在辐射区间辐射值的比例
+    double mediaToDoseScale=colorIndexTotalDose/mediaScaleSplit;
+    totalMoveX=mediaScaleSplit*(index)+(doseIntervalZeroHead.toDouble()/mediaToDoseScale).toDouble();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  final GlobalKey globalKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Positioned(
+        right: 0.0,
+        bottom: 0.0,
+        left:0.0,
+        height:30.0,
+        child:Stack(
+          children: [
+            Positioned(
+              right: 0.0,
+              bottom: 0.0,
+              left:0.0,
+
+              child:   GestureDetector(
+                child:  Opacity(
+                  opacity: 0.8,
+                  child:   Container(
+                      alignment: Alignment.centerLeft,
+                      child:Image(
+
+                        image: const AssetImage('assets/bottom_dose_color.png'),
+                        height:controlHeight,
+                        width:Global.MediaWidth,
+                        fit:BoxFit.fill,
+                      )
+                  ),
+                ),
+
+                onHorizontalDragDown: (DragDownDetails e) {
+                },
+                //手指滑动时会触发此回调
+                onHorizontalDragStart: (DragStartDetails e) {
+                  colorValueLeftLast=e.globalPosition.dx;
+                  setState(() {
+                    controlHeight=23.0;
+                  });
+                },
+                onHorizontalDragUpdate: (DragUpdateDetails e) {
+                  //当前移动的距离
+                  double nowMoveX=e.globalPosition.dx-colorValueLeftLast;
+
+
+                  //移动的总距离
+                  totalMoveX+=nowMoveX;
+
+                  //移动到哪个区间
+                  int colorIndex=totalMoveX~/mediaScaleSplit;
+                  //处理区间
+                  if(totalMoveX%mediaScaleSplit<1 && colorIndex>0){
+                    colorIndex=colorIndex-1;
+                  }
+                  if(totalMoveX<=Global.MediaWidth && totalMoveX>=0){
+
+                    //移动到所在区间的辐射值上限
+                    int colorIndexTotalDose=colorList[colorIndex];
+                    //方案2,需要累加的前段辐射总值
+                    int beforeTotalDose=0;
+                    if(colorIndex>0){
+                      //移动到所在区间的辐射值总量
+                      colorIndexTotalDose=colorList[colorIndex]-colorList[colorIndex-1];
+                      beforeTotalDose=colorList[colorIndex-1];
+                    }
+
+                    //挪动一次屏幕像素距离,与所在辐射区间辐射值的比例
+                    double mediaToDoseScale=colorIndexTotalDose/mediaScaleSplit;
+                    //本地移动需要加上的辐射值
+                    double nowMoveDoseInterval=nowMoveX*mediaToDoseScale;
+                    totalMoveDoseInterval+=nowMoveDoseInterval;
+
+                    //方案2,当前段的移动距离.
+                    double nowColorMoveX=totalMoveX%mediaScaleSplit;
+                    //方案2,处理接近整除的情况
+                    if(nowColorMoveX<1){
+                      nowColorMoveX=mediaScaleSplit;
+                    }
+                    //方案2,当前段的移动距离的辐射值
+                    double nowColorMoveDose=nowColorMoveX*mediaToDoseScale;
+
+                    setState(() {
+                      pageQueryDoseInterval=beforeTotalDose+nowColorMoveDose~/1;
+                    });
+
+
+                    colorValueLeftLast=e.globalPosition.dx;
+                  }else{
+                    if(totalMoveX<0){
+                     totalMoveX=0;
+                    }else if(totalMoveX>Global.MediaWidth){
+                      totalMoveX=Global.MediaWidth-1;
+                    }
+                    //totalMoveX-=nowMoveX;
+                  }
+                },
+                onHorizontalDragEnd: (DragEndDetails e) {
+                  setState(() {
+                    controlHeight=16.0;
+                  });
+                  //Global.queryDoseInterval=totalMoveDoseInterval.toInt();
+                  //方案2,直接累加前端辐射总值,减少误差.
+                  Global.queryDoseInterval=pageQueryDoseInterval;
+                  Global.setStore(Global.QueryDoseInterval, pageQueryDoseInterval);
+                },
+                onHorizontalDragCancel: (){
+                },
+              ),
+            ),
+            Positioned(
+              left:totalMoveX-minLeft,
+              top:-9.0,
+              width:34,
+              height:40,
+              child:Stack(
+                alignment:AlignmentDirectional.center,
+
+                children: [
+                  const Positioned(
+                    left: 16,
+                    top:15.0,
+                    width:6,
+                    height:30,
+                    child:Divider(
+                      thickness: 20,
+                      color:Colors.blueAccent,
+
+                    ),
+                  ),
+                  Text(pageQueryDoseInterval.toString(), style: const TextStyle(fontSize: 11,color:Colors.white,decoration:TextDecoration.none,shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 3.0,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                    Shadow(
+                      offset: Offset(5.0, 5.0),
+                      blurRadius: 8.0,
+                      color: Color.fromARGB(125, 0, 0, 255),
+                    ),
+                  ],),),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+    );
+
+
+  }
+
+
+}
