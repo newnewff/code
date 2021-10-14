@@ -1,0 +1,24 @@
+void initState() {
+    super.initState();
+    //注册一个回调函数yourCallback
+    WidgetsBinding.instance.addPostFrameCallback((_) => yourCallback(context));
+    
+    WidgetsBinding.instance!.addPostFrameCallback((_)
+    {
+      _controller.jumpTo(188*6);
+      print("ssssssssssssssssssssssssssssssssssssssss");
+    });
+}
+
+
+//每次都回调
+@override
+Widget build(BuildContext context) {
+  WidgetsBinding.instance.addPostFrameCallback((_) => afterBuild);
+  return Container(); // widget tree
+}
+
+
+void afterBuild() {
+  // executes after build is done
+}
