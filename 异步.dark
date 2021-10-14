@@ -1,0 +1,10 @@
+@override
+Widget build(BuildContext context) {
+  executeAfterBuild();
+  return Container();
+}
+
+Future<void> executeAfterBuild() async {
+  // this code will get executed after the build method
+  // because of the way async functions are scheduled
+}
