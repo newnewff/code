@@ -12,7 +12,8 @@ const ditu=require("@/components/map/china.json");
 export default {
   name: "Map",
   methods: {
-    mapEchartsInit() {
+    mapEchartsInit(ditu) {
+     
       const myChart = echarts.init(this.$refs.map);
       var option={
         series: [
@@ -42,6 +43,13 @@ export default {
     this.$nextTick(function(){
       echarts.registerMap('全国地图',ditu);
       this.mapEchartsInit();
+      
+       /*
+        $.get('/components/map/china.json',function(ditu){
+           echarts.registerMap('全国地图',ditu);
+            this.mapEchartsInit();
+        })
+      */
     });
   }
 };
@@ -55,5 +63,8 @@ export default {
 ```
 
 ```
-BIGMAP软件绘制离线的JSON地图文件
+GEOJSON地图数据下载：http://datav.aliyun.com/tools/atlas/#&lat=30.332329214580188&lng=106.72278672066881&zoom=3.5
+BIGMAP软件获取地图数据 http://www.bigemap.com/reader/download/ 
+地图数据二次编辑：http://geojson.io/#map=4/34.42/103.36
+
 ```
