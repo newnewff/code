@@ -38,7 +38,27 @@ export default {
         ]
       };*/
       /* 在 ECharts 3 中不再建议在地图类型的图表使用 markLine 和 markPoint。如果要实现点数据或者线数据的可视化，可以使用在地理坐标系组件上的散点图和线图。*/
-      
+      var dianzhanDialog=['{title|{b}'].join('\n');
+      var baseLabel={show:true,verticalAlign:'top',align:'left',formatter:dianzhanDialog,rich:{title:{fontSize:16},hr:{borderColor:'#fff',width:'100%',borderWidth:0.5,height:0}}};
+      var dialogPosition={x:0.8,y:0.87};
+      var obj1Label=JSON.parse(JSON.stringify(baseLabel));
+      obj1Label.formatter=['{title|{b}','aaa','bbbb'].join('\n');
+      var option={
+        geo:[{
+          map:'全国地图',roam:false,itemStyle:{}
+        }],
+        series:[
+          {
+            type:'lines',polyline:true,data:[{name:'aaa',coords:[[111,22],[122,33],[133,44]]}]
+          },
+          {
+            type:'lines',data:[{name:'aaa',coords:[[133,44][133+dialogPosition.x,44+dialogPosition.y]],label:obj1Label}]
+          },
+          {
+            type:'effectScatter',data:[[111,22],[222,33]]
+          }
+        ]
+      }
       
       myChart.setOption(option, true);
     }
