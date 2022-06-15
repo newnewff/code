@@ -15,7 +15,8 @@ export default {
     mapEchartsInit(ditu) {
      
       const myChart = echarts.init(this.$refs.map);
-      var option={
+      
+      /*var option={
         series: [
           {
             name: 'ditu',
@@ -35,7 +36,10 @@ export default {
             data: []
           }
         ]
-      };
+      };*/
+      /* 在 ECharts 3 中不再建议在地图类型的图表使用 markLine 和 markPoint。如果要实现点数据或者线数据的可视化，可以使用在地理坐标系组件上的散点图和线图。*/
+      
+      
       myChart.setOption(option, true);
     }
   },
