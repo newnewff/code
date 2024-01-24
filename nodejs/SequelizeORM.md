@@ -1,3 +1,4 @@
+```js
 const SequelizeAuto = require('sequelize-auto');
 const auto = new SequelizeAuto('test', 'root', '111111',{host:'127.0.0.1',dialect:'mysql'});
 
@@ -34,3 +35,4 @@ async function main (){
 }
 main();
 
+```
