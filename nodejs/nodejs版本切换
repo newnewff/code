@@ -1,0 +1,8 @@
+//安装nvm后，利用cmd文件将项目与Nodejs绑定
+
+start.cmd
+set tempPath=%path%
+set newPath=%tempPath:D:\Program Files\nodejs;=%
+path d:\Program Files\nvm\v16.16.0;%newPath%
+node -v
+npm run dev
