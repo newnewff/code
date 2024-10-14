@@ -19,6 +19,7 @@
   const mainImage=reactive([])
 
   request({url:'/data.json',method:'get'}).then((res)=>{
+    //[{left:0,top:0,width:100,height:100,type:'image',zIndex:"1",url:'/syn.jpg',color:'red',name:'zz',point:'point1'}]
     doms.push(...res);
     const tmpMain = doms.find((item)=>item.name='mainImg');
     mainImage.width=tmpMain.width,mainImage.height=tmpMain.height,mainImage.url=tmpMain.url;
